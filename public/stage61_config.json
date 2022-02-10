@@ -1,0 +1,7 @@
+{
+  "VENDOR_ID": 2,
+  "WEB_API": "https://davidani.com/api",
+  "BROADCAST_API": "http://127.0.0.1:8081",
+  "PUBNUB_PUBLISH_KEY": "pub-c-9ca356b0-98af-4df5-a831-65693fb93be4",
+  "PUBNUB_SUBSCRIBE_KEY": "sub-c-7f7f5f0a-4dcf-11ec-9668-6eac75df5fc1"
+}
