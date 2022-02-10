@@ -1804,7 +1804,7 @@ html {
         position: absolute;
         right: 75px;
         bottom: 0;
-        
+
     }
 }
 .video-js.vjs-fullscreen .vjs-volume-panel {
@@ -2222,7 +2222,7 @@ Play Button
         background: #fff;
         display: none;
         padding: 10px;
-        
+
         @include Ipadpro {
           border-radius: 15px 15px 0px 0px;
         }
@@ -3120,3 +3120,10 @@ Play Button
   .broadcast_details_slider.slick-initialized{
      opacity: 1;
    }
+//Empty cart message
+.empty_cart_msg {
+    position: absolute;
+    z-index: 99;
+    padding: 0px;
+    margin: -18px 0px 0px;
+}
