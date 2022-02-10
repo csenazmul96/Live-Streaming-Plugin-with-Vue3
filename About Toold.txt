@@ -1,0 +1,13 @@
+Live Streaming 
+Usable tools:
+#Pubnub
+#wowza streaming engine
+#Emoji
+#live chat
+#video record
+#show replay video
+#comment Sold 
+#Live Item change 
+#live comment react (love/like..)
+
+
