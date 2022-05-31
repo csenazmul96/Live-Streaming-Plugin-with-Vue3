@@ -1,6 +1,6 @@
 <template>
   <div>
-    <live-streaming v-if="currentComponent === 'live-streaming'"></live-streaming>
+    <live-streaming></live-streaming>
     <replay-video v-if="currentComponent === 'details'"></replay-video>
     <replay-video-list v-if="currentComponent === 'list'"></replay-video-list>
   </div>

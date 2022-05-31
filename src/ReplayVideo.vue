@@ -1,6 +1,24 @@
 <template>
     <div>
-        <section class="ly_broadcasting_area">
+      <div class="tv_banner" v-if="banners">
+        <img :src="banners.banner" class="img-fluid width_full" alt="" style="width: 100%;">
+      </div>
+      <section class="ly_broadcasting_area broadcasting_list mt-5">
+        <div class="ly_broadcasting_container">
+          <div class="ly_broadcasting_row">
+            <div class="video_thumbnail">
+              <video-component v-for="(video, key) in videos" :key="'product_' + key" :banners="banners" :video="video" @playVideo="playVideo"></video-component>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="modal" data-modal="smodal" :class="{'open_modal': isPlayVideo}">
+        <div class="modal_overlay" data-modal-close="smodal" @click="closeModal()"></div>
+        <div class="modal_inner ">
+          <span @click.prevent="closeModal()" data-modal-close="smodal" class="close_icon close_icon_md"><i class="lni lni-cross-circle"></i></span>
+          <div class="modal_wrapper">
+            <div class="modal_content modal_1720p">
+              <section class="ly_broadcasting_area">
             <div class="ly_broadcasting_container">
                 <div class="ly_broadcasting_row">
                     <div class="full_content">
@@ -11,7 +29,7 @@
                                     <div class="chat_head_inner" ref="largeScreenChatScroll">
                                         <ul class="js_cmsold_wrap" id="cmsoldWrap">
                                             <div class="comments">
-                                                <li v-for="(comment, i) in currentComments" :key="'comment_'+i" :class="{reply:comment.user_type === 'Admin'}">
+                                                <li v-for="(comment, i) in currentComments" :key="'comment_'+i">
                                                     <div class="append_inner">
                                                         <div class="text">
                                                             <h2>{{ comment.name }} <span>{{ comment.comment }}</span></h2>
@@ -30,7 +48,7 @@
                                     </div>
                                     <input type="text" ref="commentInput" class="form_global" disabled="disabled">
                                     <div class="imojies">
-                                        <span><img src="/images/love2.png" alt=""></span>
+                                        <span class="mr-1"><img src="/images/love2.png" alt=""></span>
                                         <span><img src="/images/like.png" alt=""></span>
                                     </div>
                                 </div>
@@ -40,33 +58,34 @@
                             <div class="inner_content">
                                 <!--===============================Video Player==========================================================================-->
                                 <div id="video_wrap">
-                                    <video id="videoplayer" v-on:play="isPlay = true" class="video-js vjs-default-skin" controls muted playsinline> </video>
+                                    <video id="videoplayer" class="video-js vjs-default-skin" controls muted playsinline> </video>
+
                                     <div class="showing_item" v-if="liveCurrentItem">
-                                        <div class="showing_item_inner">
-                                            <div class="time"><i class="lni lni-timer"></i> {{ currentPlayerTime ? currentPlayerTime : '00.00' }}</div>
-                                            <div class="live_user"><i class="lni lni-eye"></i> {{ liveData.total_view }}</div>
-                                            <div class="reply_video"><i class="lni lni-spinner-arrow"></i> Replay</div>
-                                            <div class="item_details">
-                                                <div class="img" v-if="liveCurrentItem.images.length" @click.prevent="loadCurrentItemModal(liveCurrentItem.slug)">
-                                                    <img :src="liveCurrentItem.images[0].compressed_image" class="width_full">
-                                                </div>
-                                                <div class="text">
-                                                    <h2>COMMENT : "{{ settings ? settings.comment_prefix : null }} {{ itemIdentifire(liveCurrentItem.id) }}"</h2>
-                                                    <p>Color :  {{liveCurrentItem.inventories.map(i => capitalizedName(i.color_name)).join(', ')}}</p>
-                                                    <p>Pack : {{ liveCurrentItem.pack ? liveCurrentItem.pack.name : null }}</p>
-                                                </div>
-                                            </div>
-                                            <div class="price">${{ liveCurrentItem ? parseInt(liveCurrentItem.price).toFixed(2) : null }}</div>
+                                      <div class="showing_item_inner">
+                                        <div class="time"><img :src="$config.BROADCAST_API+'/images/clock.png'" alt="">{{ currentPlayerTime }}</div>
+                                        <div class="live_user"> <img :src="$config.BROADCAST_API+'/images/eye.png'" alt="">{{ liveData.total_view }}</div>
+                                        <div class="item_details">
+                                          <div class="img" v-if="liveCurrentItem.images.length" @click.prevent="loadCurrentItemModal(liveCurrentItem.slug)">
+                                            <img :src="liveCurrentItem.images[0].compressed_image" class="width_full">
+                                          </div>
+                                          <div class="text">
+                                            <h2><span>Live</span> Type: "{{ settings ? settings.comment_prefix : null }} {{ itemIdentifire(liveCurrentItem.id) }}"</h2>
+                                            <P>color: {{liveCurrentItem.inventories.map(i => capitalizedName(i.color_name)).join(', ')}}</P>
+                                            <P>Pack: {{ liveCurrentItem.pack ? liveCurrentItem.pack.name : null }}</P>
+                                          </div>
+
                                         </div>
+                                        <div class="price">${{ liveCurrentItem.price.toFixed(2) }}</div>
+                                      </div>
                                     </div>
+                                    <div class="logo_stage61">
+                                        <img :src="$config.BROADCAST_API+'/images/logo-stage61.png'" alt="">
+                                      </div>
 
                                     <div class="custom_play_btn" @click.prevent="playerButton">
-                                        <div class="playBut">
-                                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" width="213.7px" height="213.7px" viewBox="0 0 213.7 213.7" enable-background="new 0 0 213.7 213.7" xml:space="preserve">
-                      <polygon class="triangle" id="homangle" fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="73.5,62.5 148.5,105.8 73.5,149.1 "></polygon>
-                                                <circle class="circle" id="XMLID_17_" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" cx="106.8" cy="106.8" r="103.3"></circle>
-                    </svg>
-                                        </div>
+                                      <div class="playBut">
+                                        <span class="play-pause-buttn"></span>
+                                      </div>
                                     </div>
                                     <div class="product_collapse_mobile" @click.prevent="modalOpen('#Itemsmain')">
                                         <i class="lni lni-list"></i>
@@ -80,7 +99,7 @@
                                                 <div class="cms_sold_top_slider" v-if="currentItemImages">
                                                     <div class="" v-for="(image, i) in currentItemImages" :key="'image_mob_'+i">
                                                         <div :class="{active:currentItem.id === image.item_id}">
-                                                            <a href="Javascript:void(0)"><img :src="image.compressed_image" alt="Wholesale women's clothing Davi & Dani" class="img-fluid"></a>
+                                                            <a href="Javascript:void(0)"><img :src="image.compressed_image" alt="" class="img-fluid"></a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -95,7 +114,7 @@
                                                         <div class="cms_col col-5 col-lg-4 pr_5">
                                                             <div class="pack_ratio_inner_wrap color">
                                                                 <div class="pack_ratio_inner ratio_color" @click.prevent="selectColorImage(inv.color_id)">
-                                                                    <img :src="getColorImage(inv.color_id, currentItem.images)" class="img-fluid" alt="Wholesale women's clothing Davi & Dani">
+                                                                    <img :src="getColorImage(inv.color_id, currentItem.images)" class="img-fluid" alt="">
                                                                     <span>{{ inv.color_name }} <br> <b v-if="inv.available_on != 'null'">{{ inv.available_on }}</b> </span>
                                                                 </div>
                                                             </div>
@@ -161,7 +180,7 @@
                                                         <li v-for="(item, i) in products" @click.prevent="loadItem(item.slug, '#Items1')" :key="'mob_'+i" :class="{active:item.slug === currentItem.slug}">
                                                             <div class="product_inner_list">
                                                                 <div class="img">
-                                                                    <img :src="item.images[0].compressed_image" alt="Wholesale women's clothing Davi & Dani">
+                                                                    <img :src="item.images[0].compressed_image" alt="">
                                                                 </div>
                                                                 <div class="text">
                                                                     <p :class="[{pre_order:item.available_on}, {Instock:!item.available_on}]">{{ settings ? settings.comment_prefix : null }} {{ itemIdentifire(item.id) }} <span v-if="item.available_on">PRE ORDER - {{item.available_on}}</span> <span v-else>Instock</span></p>
@@ -183,7 +202,7 @@
                                             <div class="chat_head_inner" ref="smallScreenChatScroll">
                                                 <ul class="js_cmsold_wrap" id="cmsoldWrap">
                                                     <div class="comments">
-                                                        <li v-for="(comment, i) in currentComments" :key="'comment_'+i" :class="{reply:comment.user_type === 'Admin'}">
+                                                        <li v-for="(comment, i) in currentComments" :key="'comment_'+i">
                                                             <div class="append_inner">
                                                                 <div class="text">
                                                                     <h2>{{ comment.name }} <span>{{ comment.comment }}</span></h2>
@@ -212,7 +231,7 @@
                                 <div class="cms_sold_top_slider" v-if="currentItemImages">
                                     <div class="" v-for="(image, i) in currentItemImages" :key="'image_'+i">
                                         <div :class="{active:currentItem.id === image.item_id}">
-                                            <a href="Javascript:void(0)"><img :src="image.compressed_image" alt="Wholesale women's clothing Davi & Dani" class="img-fluid"></a>
+                                            <a href="Javascript:void(0)"><img :src="image.compressed_image" alt="" class="img-fluid"></a>
                                         </div>
                                     </div>
                                 </div>
@@ -227,7 +246,7 @@
                                         <div class="cms_col col-5 col-lg-4 pr_5">
                                             <div class="pack_ratio_inner_wrap color">
                                                 <div class="pack_ratio_inner ratio_color" @click.prevent="selectColorImage(inv.color_id)">
-                                                    <img :src="getColorImage(inv.color_id, currentItem.images)" class="img-fluid" alt="Wholesale women's clothing Davi & Dani">
+                                                    <img :src="getColorImage(inv.color_id, currentItem.images)" class="img-fluid" alt="">
                                                     <span>{{ inv.color_name }} <br> <b v-if="inv.available_on != 'null'">{{ inv.available_on }}</b> </span>
                                                 </div>
                                             </div>
@@ -290,7 +309,7 @@
                                         <li v-for="(item, i) in products" @click.prevent="loadItem(item.slug, '#Items')" :key="'desk_'+i" :class="{active:item.slug === currentItem.slug}">
                                             <div class="product_inner_list">
                                                 <div class="img">
-                                                    <img :src="item.images[0].compressed_image" alt="Wholesale women's clothing Davi & Dani">
+                                                    <img :src="item.images[0].compressed_image" alt="">
                                                 </div>
                                                 <div class="text">
                                                     <p :class="[{pre_order:item.available_on}, {Instock:!item.available_on}]">{{ settings ? settings.comment_prefix : null }} {{ itemIdentifire(item.id) }} <span v-if="item.available_on">PRE ORDER - {{item.available_on}}</span> <span v-else>Instock</span></p>
@@ -308,59 +327,23 @@
                 </div>
             </div>
         </section>
-        <section class="ly_broadcasting_area broadcasting_list">
-            <div class="ly_broadcasting_container">
-                <div class="inner details_view" v-show="recentVideoList.length">
-                    <div class="details_title">
-                        <h2>Recent Video</h2>
-                    </div>
-                    <div class="others_content">
-                        <div class="others_product_wrap">
-                            <div class="broadcast_details_slider">
-                                <div v-for="(video, i) in recentVideoList" :key="'video_'+i">
-                                    <div class="slide_inner">
-                                        <div class="inner_wrap">
-                                            <a :href="'details?video='+video.id">
-                                                <div class="slide_img">
-                                                    <img :src="setting && setting.thumb ? setting.thumb : '/images/play.png'" class="width_full" alt="">
-                                                    <img v-if="video.preview_gif" :src="video.preview_gif" class="width_full on_hover" alt="">
-                                                </div>
-                                                <div class="play">
-                                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" width="213.7px" height="213.7px" viewBox="0 0 213.7 213.7" enable-background="new 0 0 213.7 213.7" xml:space="preserve">
-
-                                                        <polygon class="triangle" id="XMLID_18_" fill="none" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="
-                                                        73.5,62.5 148.5,105.8 73.5,149.1 "></polygon>
-
-                                                        <circle class="circle" id="XMLID_17_" fill="none" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" cx="106.8" cy="106.8" r="103.3"></circle>
-                                                    </svg>
-                                                </div>
-                                                <div class="text">
-                                                    <h3>{{ video.name }}</h3>
-                                                    <ul>
-                                                        <li>{{ video.broadcaster }}</li>
-                                                        <li>{{ video.start_at_format }}</li>
-                                                    </ul>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-        </section>
+          </div>
+        </div>
+      </div>
     </div>
 </template>
 <script>
+import VideoComponent from "./VideoComponent";
 export default {
     name: 'live-chat',
+  components:{VideoComponent},
     props: {
     },
     data() {
         return {
-            user: null,
+            isPlayVideo: false,
+            user: document.querySelector("meta[name='auth-user']").getAttribute('content'),
             liveData: null,
             comments: [],
             currentItem: null,
@@ -374,65 +357,30 @@ export default {
             },
             currentComments:[],
             player: null,
-            showReact: false,
             reacts: [],
-            currentComment: null,
-            reply: false,
-            isPlay: false,
             itemHistory: [],
-            recentVideoList: [],
             currentEmoji: null,
             settings:null,
-            currentPlayerTime: null,
-            playStatus: true
+            currentPlayerTime: '0.00',
+            inactiveQueryParams: {
+              page: 1
+            },
+            videos: [],
+            banners: null,
         }
     },
-    watch: {
-        'player': function () {
-            let self = this
-            this.player.on('touchstart', (e) => {
-                let player = e.target
-                if(player.paused){
-                    if(self.player)
-                        self.player.play()
-                }else{
-                    if(self.player)
-                        self.player.pause()
-                }
-            });
-        }
-    },
-    created() {
-        this.axios.get(this.$config.WEB_API+'/user-details')
-            .then((response) => {
-                this.user = response.data.data
-                if(!this.user)
-                    window.location('/')
-            })
-        this.axios.get(this.$config.BROADCAST_API + '/api/settings/' + this.$config.VENDOR_ID)
-            .then((response)=>{
-                this.settings = response.data.data
-            })
-        let urlParams = new URLSearchParams(window.location.search);
-        let self = this
-        this.axios.get(this.$config.BROADCAST_API + '/api/davi-tv/'+urlParams.get('video'))
-            .then((response)=>{
-                this.liveData = response.data.data
-                this.loadProducts()
-                this.loadComments()
-                this.loadReacts()
-                this.initJwPlayer()
-                this.loadItemHistory()
-            })
-        this.axios.get(this.$config.BROADCAST_API + '/api/live-video-inactive/' + this.$config.VENDOR_ID)
-            .then((response)=>{
-                this.recentVideoList = response.data.data
-                setTimeout(function(){
-                    self.relatedVideoSlider()
-                }, 500);
-            })
 
-        this.loadBannerThumb();
+    created() {
+          if(!this.user) {
+            window.location.replace("/");
+          } else {
+            this.axios.get(this.$config.BROADCAST_API + '/api/settings/' + this.$config.VENDOR_ID)
+                .then((response) => {
+                  this.settings = response.data.data
+                })
+            this.loadBannerThumb();
+            this.loadInactiveList();
+          }
     },
     beforeUnmount() {
         if (this.player) {
@@ -460,9 +408,28 @@ export default {
         }
     },
     methods: {
+      closeModal(){
+        this.isPlayVideo= false;
+        if(this.player)
+          this.player.dispose();
+        this.modalOpenCloseJquery(0)
+        window.$("#video_wrap").prepend(`<video id="videoplayer" class="video-js vjs-default-skin" controls muted playsinline> </video>`)
+      },
+      playVideo(id){
+        this.axios.get(this.$config.BROADCAST_API + '/api/replay-videos/'+id)
+            .then((response)=>{
+              this.liveData = response.data.data
+              this.loadProducts()
+              this.loadComments()
+              this.loadReacts()
+              this.initJwPlayer()
+              this.loadItemHistory()
+              this.isPlayVideo= true;
+            })
+      },
         loadBannerThumb(){
             this.axios.get(this.$config.WEB_API+'/api/tv-banner-thumb').then((response) => {
-                this.setting = response.data;
+                this.banners = response.data;
             })
         },
         capitalizedName(name){
@@ -531,7 +498,6 @@ export default {
                     if(parseInt(item.time) === Math.round(time)){
                         if(this.currentEmoji != Math.round(time)){
                             this.currentEmoji = Math.round(time)
-                            this.showReact = true;
                             this.appendEmoji(item.react)
                         }
                     }
@@ -542,7 +508,7 @@ export default {
             try {
                 this.player.dispose();
             } catch (er) {
-                console.log(er)
+                // console.log(er)
             }
             let self = this;
             this.player = window.videojs('videoplayer',{
@@ -559,7 +525,7 @@ export default {
                     }
                 }
             });
-
+            self.modalOpenCloseJquery(1)
             this.player.ready(function() {
                 self.player.src([
                     {src: self.liveData.video_url_fallback, type: 'application/x-mpegURL'},
@@ -619,6 +585,13 @@ export default {
                     })
             }
         },
+        loadInactiveList(){
+          this.axios.get(this.$config.BROADCAST_API + '/api/live-video-inactive/'+this.$config.VENDOR_ID, {
+            params: {...this.inactiveQueryParams}
+          }).then((response) => {
+            this.videos = response.data.data;
+          }).catch(() => {})
+        },
         itemIdentifire(id){
             if(this.liveData && this.liveData.items.length){
                 let item = this.liveData.items.find(x=> x.item_id === id)
@@ -654,7 +627,7 @@ export default {
                     if (color.quantity > 0) {
                         cartItems.push({
                             item_id: this.currentItem.id,
-                            customer_id: this.user.id,
+                            customer_id: this.user,
                             indicator: color.indicator,
                             color_id: color.id,
                             quantity: color.quantity,
@@ -662,7 +635,7 @@ export default {
                     }
                 })
                 if (cartItems.length) {
-                    this.axios.post(this.$config.WEB_API + '/live-cart/add', {items: cartItems}).then((response) => {
+                    this.axios.post(this.$config.WEB_API + '/api/admin/add-cart-from-facebook', {items: cartItems}).then((response) => {
                         window.$(".header_cart a span").html(response.data)
                         for(let i = 0; i < this.cartForm.colors.length ; i++)
                             this.cartForm.colors[i].quantity = 0
@@ -709,6 +682,7 @@ export default {
                 color.quantity--;
         },
         selectColorImage(colorId){
+            window.$(".cms_sold_top_slider").addClass('opacity0')
             this.activeColor = colorId;
             this.currentItemImages = [];
             if (colorId) {
@@ -717,7 +691,7 @@ export default {
                     window.$('.cms_sold_top_slider').slick('unslick');
                     window.$('.cms_sold_top_slider').css({'min-height' : height+'px'});
                 }
-                this.currentItemImages = this.currentItem.images.filter((i) => parseInt(i.color_id) === colorId);
+                this.currentItemImages = this.currentItem.images.filter((i) => i.color_id === colorId);
                 if(!this.currentItemImages.length && this.currentItem.images.length){
                     this.currentItemImages[0] = this.currentItem.images[0]
                     if(this.currentItem.images.length > 1)
@@ -726,6 +700,9 @@ export default {
                 setTimeout(() => {
                     this.initTopSlider();
                 }, 0)
+                setTimeout(() => {
+                    window.$(".cms_sold_top_slider").removeClass('opacity0')
+                }, 100)
             }
         },
         initItemSlider() {
@@ -809,6 +786,7 @@ export default {
             });
             setTimeout(() => {
                 window.$('.cms_sold_top_slider').css({'min-height' : 'auto'});
+                // window.$(".cms_sold_top_slider").removeClass('opacity0')
             }, 250)
         },
         loadItem(slug, id = null) {
@@ -828,6 +806,24 @@ export default {
                 this.modalOpen(id)
             }
         },
+      modalOpenCloseJquery(status){
+        if(status === 0){
+          window.$('body').css('padding-right', '0px');
+          window.$('.header_area').css('margin-right', '0px');
+          window.$('body').removeClass('model_open');
+        } else {
+          let window_height = window.$(window).height();
+          let body_height = window.$('body').height();
+          if (body_height > window_height) {
+            window.$('body').css('padding-right', '17px');
+            window.$('.header_area').css('margin-right', '17px');
+          } else {
+            window.$('body').css('padding-right', '0px');
+            window.$('.header_area').css('margin-right', '0px');
+          }
+          window.$('body').addClass('model_open');
+        }
+      },
     },
 
 }
